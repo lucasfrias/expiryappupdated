@@ -37,9 +37,6 @@ class LocalNotification {
         payload: 'item x');
   }
 
-  //Scheduling may or may not be be implemented. Problem occurs is food item is scheduled them deleted. Do not know if
-  //there is a way to delete a specific notification. There is a cancel all notifications option but then i would constantly
-  //create be checking if a food item was deleted and re-creating the scheduled notification.
   scheduleNotification(String foodName, DateTime expiryDate, int id) async {
     print("Scheduling notifications.");
     DateTime formattedExpiryDate = new DateTime(expiryDate.year, expiryDate.month, expiryDate.day);
@@ -48,13 +45,12 @@ class LocalNotification {
     var scheduledNotificationDateTime;
     var message;
     if(formattedExpiryDate.isBefore(sevenDaysInAdvance)){
-      //scheduledNotificationDateTime = expiryDate.subtract(new Duration(days: 3));
-      scheduledNotificationDateTime = DateTime.now().add(new Duration(minutes: 1));
+      scheduledNotificationDateTime = expiryDate.subtract(new Duration(days: 3));
       message = '$foodName will expire in 3 days.';
     }
     else{
-      //scheduledNotificationDateTime = expiryDate.subtract(new Duration(days: 7));
-      scheduledNotificationDateTime = DateTime.now().add(new Duration(minutes: 1));
+      scheduledNotificationDateTime = expiryDate.subtract(new Duration(days: 7));
+      //scheduledNotificationDateTime = DateTime.now().add(new Duration(minutes: 1));
       message = '$foodName will expire in 7 days.';
     }
     var androidPlatformChannelSpecifics =

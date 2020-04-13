@@ -5,7 +5,6 @@ import 'package:flutter/services.dart';
 import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
 import 'package:http/http.dart' as http;
 import 'package:animated_text_kit/animated_text_kit.dart';
-import 'package:google_fonts/google_fonts.dart';
 
 import '../database_helper.dart';
 import '../food_item.dart';
@@ -19,11 +18,11 @@ class Pantry extends StatefulWidget {
   _PantryState createState() => _PantryState();
 }
 
-class _PantryState extends State<Pantry>{
+class _PantryState extends State<Pantry> {
   LocalNotification localNotifications;
 
   @override
-  void initState(){
+  void initState() {
     localNotifications = new LocalNotification();
     super.initState();
   }
@@ -31,84 +30,83 @@ class _PantryState extends State<Pantry>{
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-                    appBar: AppBar(
-                      title: Text(
-                        'Pantry',
-                        maxLines: 5,
-                        overflow: TextOverflow.ellipsis,
-                        style: TextStyle(
-                          height: 0.3,
-                            color: Colors.white,
-                            fontWeight: FontWeight.w900,
-                            //fontStyle: FontStyle.italic,
-                            fontFamily: 'Times New Roman',
-                            fontSize: 40),
-                      ),
+        appBar: AppBar(
+          title: Text(
+            'Pantry',
+            maxLines: 5,
+            overflow: TextOverflow.ellipsis,
+            style: TextStyle(
+                height: 0.3,
+                color: Colors.white,
+                fontWeight: FontWeight.w900,
+                //fontStyle: FontStyle.italic,
+                fontFamily: 'Times New Roman',
+                fontSize: 40),
+          ),
+        ),
+        body: FutureBuilder<List<FoodItem>>(
+            future: DatabaseHelper.instance.retrieveNonExpiredFoods(),
+            builder: (context, snapshot) {
+              if (snapshot.hasData) {
+                if (snapshot.data.length == 0) {
+                  //return Text("test");
+                  return Center(
+                      child: SizedBox(
+                    width: 350.0,
+                    child: TypewriterAnimatedTextKit(
+                      isRepeatingAnimation: false,
+                      text: [
+                        "There's no food in your pantry!",
+                        "Add some food by",
+                        "Clicking the plus button in the top right",
+                        "And scanning a barcode!"
+                      ],
+                      textStyle: TextStyle(
+                          fontSize: 30.0, fontFamily: "Times New Roman"),
                     ),
-                    body: FutureBuilder<List<FoodItem>>(
-                      future: DatabaseHelper.instance.retrieveNonExpiredFoods(),
-                      builder: (context, snapshot) {
-                        if(snapshot.hasData) {
-                          if(snapshot.data.length == 0) {
-                            //return Text("test");
-                            return Center(
-                                child: SizedBox(
-                              width: 350.0,
-                              child: TypewriterAnimatedTextKit(
-                                isRepeatingAnimation: false,
-                                text: [
-                                  "There's no food in your pantry!",
-                                  "Add some food by",
-                                  "Clicking the plus button in the top right",
-                                  "And scanning a barcode!"
-                                ],
-                                textStyle: TextStyle(
-                                    fontSize: 30.0,
-                                    fontFamily: "Times New Roman"
+                  ));
+                } else {
+                  return ListView.builder(
+                    itemCount: snapshot.data.length,
+                    itemBuilder: (context, index) {
+                      return Dismissible(
+                          direction: DismissDirection.endToStart,
+                          key: UniqueKey(),
+                          onDismissed: (direction) {
+                            _deleteFood(snapshot.data[index]);
+                          },
+                          background: Container(
+                              // padding: EdgeInsets.only(right: 10),
+                              //alignment: AlignmentDirectional.centerEnd,
+                              color: Colors.redAccent,
+                              child: Icon(Icons.delete_forever,
+                                  color: Colors.white)),
+                          child: Card(
+                              color: Colors.white,
+                              child: ListTile(
+                                leading: CircleAvatar(
+                                  backgroundImage:
+                                      snapshot.data[index].imageUrl !=
+                                              "BlankImage.png"
+                                          ? NetworkImage(
+                                              snapshot.data[index].imageUrl)
+                                          : AssetImage(
+                                              'assets/images/BlankImage.png'),
                                 ),
-                              ),
-                              )
-                            );
-                          }
-                          else {
-                            return ListView.builder(
-                              itemCount: snapshot.data.length,
-                              itemBuilder: (context, index) {
-                                return Dismissible(
-                                    direction: DismissDirection.endToStart,
-                                    key: UniqueKey(),
-                                    onDismissed: (direction) {
-                                      _deleteFood(snapshot.data[index]);
-                                    },
-                                    background: Container(
-                                       // padding: EdgeInsets.only(right: 10),
-                                        //alignment: AlignmentDirectional.centerEnd,
-                                        color: Colors.redAccent,
-                                        child: Icon(Icons.delete_forever, color: Colors.white)
-                                    ),
-                                child: Card(
-                                  color: Colors.white,
-                                    child: ListTile(
-                                  leading: CircleAvatar(
-                                    backgroundImage: snapshot.data[index]
-                                        .imageUrl != "BlankImage.png"
-                                        ?
-                                    NetworkImage(snapshot.data[index].imageUrl)
-                                        :
-                                    AssetImage('assets/images/BlankImage.png'),
-                                  ),
-                                  title: Text(snapshot.data[index].name,
-                                        style: TextStyle(
+                                title: Text(
+                                  snapshot.data[index].name,
+                                  style: TextStyle(
                                       fontFamily: 'Times New Roman',
-                                        fontSize: 18),
-                                        ),
-                                  subtitle: Text('Expires: ' +
-                                      Utility.formatISO(snapshot.data[index].expirationDate),
-                                      style: TextStyle(
+                                      fontSize: 18),
+                                ),
+                                subtitle: Text(
+                                    'Expires: ' +
+                                        Utility.formatISO(snapshot
+                                            .data[index].expirationDate),
+                                    style: TextStyle(
                                         fontFamily: 'Times New Roman',
-                                        fontSize: 13)
-                                  ),
-                                  /*onTap: () {
+                                        fontSize: 13)),
+                                /*onTap: () {
                                     Navigator.push(
                                       context,
                                       MaterialPageRoute(
@@ -121,37 +119,29 @@ class _PantryState extends State<Pantry>{
                                       ),
                                     );
                                   },*/
-                                    )
-                                )
-                                );
-                              },
-                            );
-                          }
-                        }else if(snapshot.hasError){
-                          return Text("Error!" + snapshot.error.toString());
-                        }
-                        return CircularProgressIndicator();
-                      }
-                    ),
-                    floatingActionButton: FloatingActionButton(
-                        foregroundColor: Colors.white,
-                        backgroundColor: Colors.black38,
-                        elevation: 10.0,
-                        child: Icon(Icons.add),
-                        onPressed: () {
-                          setState(() {
-                            test();
-                            //addProduct();
-                          });
-                        }
-                    ),
-                    floatingActionButtonLocation: FloatingActionButtonLocation
-                        .endTop
-                );
+                              )));
+                    },
+                  );
+                }
+              } else if (snapshot.hasError) {
+                return Text("Error!" + snapshot.error.toString());
+              }
+              return CircularProgressIndicator();
+            }),
+        floatingActionButton: FloatingActionButton(
+            foregroundColor: Colors.white,
+            backgroundColor: Colors.black38,
+            elevation: 10.0,
+            child: Icon(Icons.add),
+            onPressed: () {
+              setState(() {
+                addProduct();
+              });
+            }),
+        floatingActionButtonLocation: FloatingActionButtonLocation.endTop);
   }
 
-
-  Future<void> test() async{
+  /*Future<void> test() async{
    /* Navigator.push(
       context,
       MaterialPageRoute(
@@ -159,45 +149,47 @@ class _PantryState extends State<Pantry>{
       ),
     );*/
     var date = await Utility.selectDate(context);
-    var food = new FoodItem(name: "Milk",
-        imageUrl: "BlankImage.png", //"https://static.openfoodfacts.org/images/products/073/762/806/4502/front_en.6.100.jpg",
-        expirationDate: //new DateTime.now().subtract(new Duration(days: 8)).toIso8601String(),
+    var food = new FoodItem(name: "Eggs",
+        imageUrl: //"https://thestayathomechef.com/wp-content/uploads/2017/08/Most-Amazing-Lasagna-4-e1503516670834.jpg",
+        "BlankImage.png", //"https://static.openfoodfacts.org/images/products/073/762/806/4502/front_en.6.100.jpg",
+        expirationDate: //new DateTime.now().add(new Duration(days: 9)).toIso8601String(),
         date.toIso8601String(),
         expired: false);
     FoodItem result = await DatabaseHelper.instance.addFood(food);
-    print(result.id.toString());
+    //print(result.id.toString());
     setState(()  {});
-    localNotifications.scheduleNotification("Test: " + result.id.toString(), date, result.id);
-  }
+    localNotifications.scheduleNotification(food.name, date, result.id);
+  }*/
 
   Future<void> addProduct() async {
     try {
       var barcode = await barcodeScanning();
-      print("Barcode: " + barcode + "\n");
       // ignore: null_aware_in_logical_operator
-      if(barcode?.isNotEmpty && barcode != null && barcode != "-1") {
+      if (barcode?.isNotEmpty && barcode != null && barcode != "-1") {
         var product = await fetchProduct(barcode);
         if (product.statusCode != "0" || product != null) {
-          try{
-          if (product.imageUrl.isEmpty || product.imageUrl == null) {
-            product.imageUrl = "BlankImage.png";
-          }
-          var expirationDate = await Utility.selectDate(context);
+          try {
+            if (product.imageUrl.isEmpty || product.imageUrl == null) {
+              product.imageUrl = "BlankImage.png";
+            }
+            var expirationDate = await Utility.selectDate(context);
             if (expirationDate != null) {
-              FoodItem result = await DatabaseHelper.instance.addFood(new FoodItem(name: product.name,
-                  imageUrl: product.imageUrl,
-                  expirationDate: expirationDate.toIso8601String(),
-                  expired: false));
+              FoodItem result = await DatabaseHelper.instance.addFood(
+                  new FoodItem(
+                      name: product.name,
+                      imageUrl: product.imageUrl,
+                      expirationDate: expirationDate.toIso8601String(),
+                      expired: false));
               setState(() {});
               print("\nScheduled notification");
               localNotifications.scheduleNotification(
                   product.name, expirationDate, result.id);
               print("\nSuccessfully added item!");
             }
-          }catch(e){}
+          } catch (e) {}
         }
       }
-    }catch(e){
+    } catch (e) {
       ConfirmAction action = await Utility.asyncManualBarcodeDialog(context);
       if (action == ConfirmAction.ACCEPT) {
         Navigator.push(
@@ -210,8 +202,9 @@ class _PantryState extends State<Pantry>{
     }
   }
 
-  _deleteFood(FoodItem food) async{
-    ConfirmAction action = await Utility.asyncConfirmDialog(context, 'Delete ${food.name} from pantry?');
+  _deleteFood(FoodItem food) async {
+    ConfirmAction action = await Utility.asyncConfirmDialog(
+        context, 'Delete ${food.name} from pantry?');
     setState(() {
       if (action == ConfirmAction.ACCEPT) {
         DatabaseHelper.instance.deleteFood(food.id);
@@ -237,7 +230,8 @@ Future<String> barcodeScanning() async {
 }
 
 Future<Product> fetchProduct(String barcode) async {
-  final response = await http.get('https://us-en.openfoodfacts.org/api/v0/product/' + barcode);
+  final response = await http
+      .get('https://us-en.openfoodfacts.org/api/v0/product/' + barcode);
   if (response.statusCode == 200) {
     // If the server did return a 200 OK response, then parse the JSON.
     return Product.fromJson(json.decode(response.body));
