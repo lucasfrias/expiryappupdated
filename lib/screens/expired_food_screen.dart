@@ -47,10 +47,10 @@ class _ExpiredFoodState extends State<ExpiredFood> {
                   return Center(
                       child: SizedBox(
                         width: 350.0,
+                        height: 150.0,
                         child: FadeAnimatedTextKit(
                           isRepeatingAnimation: false,
                           text: [
-                            "No expired food yet!",
                             "When items expire they will show up here."
                           ],
                           textStyle: TextStyle(
@@ -81,11 +81,11 @@ class _ExpiredFoodState extends State<ExpiredFood> {
                       child: ListTile(
                         leading: CircleAvatar(
                           backgroundImage: snapshot.data[index]
-                              .imageUrl != "BlankImage.png"
+                              .imageUrl != "fork.png"
                               ?
                           NetworkImage(snapshot.data[index].imageUrl)
                               :
-                          AssetImage('assets/images/BlankImage.png'),
+                          AssetImage('assets/images/fork.png'),
                         ),
                         title: Text(snapshot.data[index].name,
                           style: TextStyle(
@@ -132,7 +132,7 @@ class _ExpiredFoodState extends State<ExpiredFood> {
   }
 
   _deleteFood(BuildContext context, int id, String name) async{
-    ConfirmAction action = await Utility.asyncConfirmDialog(context, 'Delete $name from pantry?', 'Delete food?');
+    ConfirmAction action = await Utility.asyncConfirmDialog(context, 'Delete $name from expired list?', 'Delete food?');
     setState(() {
       if (action == ConfirmAction.ACCEPT) {
         DatabaseHelper.instance.deleteFood(id);

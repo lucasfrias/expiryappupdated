@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
@@ -7,6 +9,7 @@ import '../database_helper.dart';
 import '../food_item.dart';
 import '../utility.dart';
 import '../local_notification.dart';
+import 'expirationDatePickerScreen.dart';
 
 class AddFoodToPantryScreen extends StatefulWidget {
   @override
@@ -18,6 +21,7 @@ class AddFoodToPantryScreen extends StatefulWidget {
 class AddFoodToPantryScreenState extends State<AddFoodToPantryScreen> {
   final _text = TextEditingController();
   bool _validate = false;
+  DateTime expirationDate;
 
   @override
   void dispose() {
@@ -45,45 +49,90 @@ class AddFoodToPantryScreenState extends State<AddFoodToPantryScreen> {
               fontSize: SizeConfig.safeBlockHorizontal * 10),
         ),
       ),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            TextField(
-              style: TextStyle(
-                  color: Colors.black45,
-                  fontFamily: 'Times New Roman'),
-              controller: _text,
-              decoration: InputDecoration(
-                labelText: 'Enter the name of your food.',
-                errorText: _validate ? 'Value Can\'t Be Empty' : null,
+      body: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: <Widget>[
+          Container(
+            width: 400,
+            child: TextField(
+                style: TextStyle(
+                    fontSize: 23,
+                    color: Colors.black45,
+                    fontFamily: 'Times New Roman'),
+                controller: _text,
+                decoration: InputDecoration(
+                  border: OutlineInputBorder(),
+                  labelText: 'Enter the name of your food.',
+                  errorText: _validate ? 'Value Can\'t Be Empty' : null,
+                ),
               ),
-            ),
-            RaisedButton(
-              onPressed: () async {
-                setState(() {
-                  _text.text.isEmpty ? _validate = true : _validate = false;
-                });
+          ),
+          Align(
+            alignment: Alignment(-0.88, -0.75),
+            child: Padding(
+                padding: EdgeInsets.fromLTRB(0, 50, 5, 0),
+                child: Text("Set expiration date",
+                style: TextStyle(fontSize: 23, color: Colors.black45, fontFamily: 'Times New Roman')
+                )
+              ),
+          ),
+          Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              SizedBox(
+                  height: 200,
+                  child: CupertinoDatePicker(
+                      initialDateTime: DateTime.now(),
+                      minimumYear: DateTime.now().year,
+                      mode: CupertinoDatePickerMode.date,
+                      onDateTimeChanged: (dateTime) {
+                        setState(() {
+                          expirationDate = dateTime;
+                        });
+                      }
+                  )
+              ),
+              RaisedButton(
+                onPressed: () async {
+                  setState(() {
+                    _text.text.isEmpty ? _validate = true : _validate = false;
+                  });
 
-                if(!_validate && _text.text.isNotEmpty){
-                  var expirationDate = await Utility.selectDate(context);
-                  if(expirationDate != null){
-                    FoodItem foodItem = new FoodItem(name:_text.text,
-                        imageUrl: "fork.png",
-                        expirationDate: expirationDate.toIso8601String(),
-                        expired: false);
-                    FoodItem result = await DatabaseHelper.instance.addFood(foodItem);
-                    localNotifications.scheduleNotification(foodItem.name, expirationDate, result.id);
-                    Navigator.pop(context);
+                  if(!_validate && _text.text.isNotEmpty){
+
+                    // var expirationDate = await Utility.selectDate(context);
+                   /* final expirationDate = await Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => ExpirationDateScreen(),
+                        )
+                    );
+
+                    */
+                    if (expirationDate != null) {
+                      FoodItem result = await DatabaseHelper.instance.addFood(
+                          new FoodItem(
+                              name: _text.text,
+                              imageUrl: "fork.png",
+                              expirationDate: expirationDate.toString(),
+                              expired: false));
+                      setState(() {});
+                      localNotifications.scheduleNotification(
+                          _text.text, expirationDate, result.id);
+                      print("\nSuccessfully added item!");
+                      Navigator.pop(context);
+                    }
                   }
-                }
-              },
-              child: Text('Submit'),
-              textColor: Colors.white,
-              color: Colors.black45,
-            )
-          ],
-        ),
+                },
+                child: Text('Submit'),
+                textColor: Colors.white,
+                color: Colors.black45,
+              ),
+            ],
+          ),
+        ],
+
       ),
     );
   }

@@ -40,21 +40,21 @@ class LocalNotification {
   scheduleNotification(String foodName, DateTime expiryDate, int id) async {
     print("Scheduling notifications.");
     DateTime formattedExpiryDate = new DateTime(expiryDate.year, expiryDate.month, expiryDate.day);
-    DateTime now = new DateTime.now();
+    DateTime now = new DateTime(DateTime.now().year, DateTime.now().month, DateTime.now().day);
     DateTime sevenDaysInAdvance = new DateTime(now.year, now.month, now.day).add(new Duration(days: 7));
     var scheduledNotificationDateTime;
     var message;
     if(formattedExpiryDate.isBefore(sevenDaysInAdvance)){
       if(formattedExpiryDate != now){
-        //scheduledNotificationDateTime = expiryDate.subtract(new Duration(days: 1));
-        scheduledNotificationDateTime = DateTime.now().add(new Duration(seconds: 30));
+        scheduledNotificationDateTime = expiryDate.subtract(new Duration(days: 1));
+       // scheduledNotificationDateTime = DateTime.now().add(new Duration(seconds: 30));
         message = '$foodName will expire in 1 day.';
       }
     }
     else{
-      //scheduledNotificationDateTime = expiryDate.subtract(new Duration(days: 7));
-      scheduledNotificationDateTime = DateTime.now().add(new Duration(seconds: 30));
-      message = '$foodName will expire in 7 days.';
+      scheduledNotificationDateTime = expiryDate.subtract(new Duration(days: 3));
+     // scheduledNotificationDateTime = DateTime.now().add(new Duration(seconds: 30));
+      message = '$foodName will expire in 3 days.';
     }
     var androidPlatformChannelSpecifics =
     AndroidNotificationDetails('your other channel id',

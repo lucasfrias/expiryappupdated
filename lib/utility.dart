@@ -95,6 +95,40 @@ class Utility {
     return expirationDate;
   }
 
+  static DateTime selectCupertinoDate(BuildContext context) {
+    DateTime expirationDate;
+    /*
+    CupertinoDatePicker(
+      initialDateTime: DateTime.now(),
+      onDateTimeChanged: (DateTime newdate) {
+        expirationDate = newdate;
+      },
+      mode: CupertinoDatePickerMode.dateAndTime,
+    );
+    return expirationDate;
+
+
+     */
+
+    Container(
+        height: MediaQuery.of(context).copyWith().size.height / 3,
+        child: CupertinoDatePicker(
+          initialDateTime: DateTime.now(),
+          onDateTimeChanged: (DateTime newdate) {
+            expirationDate = newdate;
+          },
+          use24hFormat: true,
+          maximumDate: new DateTime(2020, 12, 30),
+          minimumYear: 2010,
+          maximumYear: 2020,
+          minuteInterval: 1,
+          mode: CupertinoDatePickerMode.dateAndTime,
+        ));
+
+    return expirationDate;
+
+  }
+
   static Future<ConfirmAction> asyncManualBarcodeDialog(BuildContext context) async {
     return showDialog<ConfirmAction>(
       context: context,

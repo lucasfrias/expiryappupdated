@@ -45,15 +45,22 @@ class AddGroceryItemScreenState extends State<AddGroceryItemScreen> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            TextField(
+            Container(
+              width: 400,
+            child: TextField(
               style: TextStyle(
+               // height: .5,
+                  fontSize: 23,
                   color: Colors.black45,
                   fontFamily: 'Times New Roman'),
               controller: _text,
               decoration: InputDecoration(
+                //contentPadding: const EdgeInsets.symmetric(vertical: 20.0),
+                border: OutlineInputBorder(),
                 labelText: 'Enter the name of your food.',
                 errorText: _validate ? 'Value Can\'t Be Empty' : null,
               ),
+            )
             ),
             RaisedButton(
               onPressed: () {

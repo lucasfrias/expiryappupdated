@@ -63,7 +63,10 @@ class _PantryState extends State<Pantry> {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => AddFoodToPantryScreen()
+                          builder: (context) => AddFoodToPantryScreen(),
+                          settings: RouteSettings(
+                            arguments: localNotifications,
+                          )
                       ),
                     );
                   }
@@ -92,13 +95,13 @@ class _PantryState extends State<Pantry> {
                   return Center(
                       child: SizedBox(
                     width: 350.0,
-                    child: TypewriterAnimatedTextKit(
+                    height: 150.0,
+                    child: FadeAnimatedTextKit(
                       isRepeatingAnimation: false,
                       text: [
                         "There's no food in your pantry!",
-                        "Add some food by,",
-                        "Clicking the camera button in the top right.",
-                        "And scanning a barcode!"
+                        "Add some food by...",
+                        "Clicking the camera button in the top right."
                       ],
                       textStyle: TextStyle(
                           fontSize: 30.0, fontFamily: "Times New Roman"),

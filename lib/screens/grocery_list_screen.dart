@@ -58,13 +58,13 @@ class _GroceryList extends State<GroceryList> {
                 if (snapshot.data.length == 0) {
                   return Center(
                       child: SizedBox(
-                      width: 360.0,
-                      child: TypewriterAnimatedTextKit(
+                      width: 350.0,
+                      height: 150.0,
+                      child: FadeAnimatedTextKit(
                       isRepeatingAnimation: false,
                       text: [
                       "Nothing in your grocery list.",
-                      "Click the plus button to add an item.",
-                      "So next time you go shopping you won't forget!"
+                      "Click the plus button to add an item."
                       ],
                       textStyle: TextStyle(
                       fontSize: 30.0,
