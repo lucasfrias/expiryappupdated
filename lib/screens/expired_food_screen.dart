@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:animated_text_kit/animated_text_kit.dart';
 import 'package:google_fonts/google_fonts.dart';
 
+import '../SizeConfig.dart';
 import '../database_helper.dart';
 import '../food_item.dart';
 import '../grocery_item.dart';
@@ -22,6 +23,7 @@ class _ExpiredFoodState extends State<ExpiredFood> {
 
   @override
   Widget build(BuildContext context) {
+    SizeConfig().initiate(context);
     return Scaffold(
         appBar: AppBar(
           title: Text(
@@ -34,7 +36,7 @@ class _ExpiredFoodState extends State<ExpiredFood> {
                 fontWeight: FontWeight.w900,
                 //fontStyle: FontStyle.italic,
                 fontFamily: 'Times New Roman',
-                fontSize: 40)
+                fontSize: SizeConfig.safeBlockHorizontal * 10)
           ),
         ),
         body: FutureBuilder<List<FoodItem>>(
@@ -49,7 +51,6 @@ class _ExpiredFoodState extends State<ExpiredFood> {
                           isRepeatingAnimation: false,
                           text: [
                             "No expired food yet!",
-                            "Woo!",
                             "When items expire they will show up here."
                           ],
                           textStyle: TextStyle(
@@ -106,7 +107,7 @@ class _ExpiredFoodState extends State<ExpiredFood> {
                           icon: Icon(Icons.arrow_forward),
                           onPressed: () async {
                             ConfirmAction action = await Utility.asyncConfirmDialog(context,
-                                'Move ' + snapshot.data[index].name + ' to grocery list?');
+                                'Move ' + snapshot.data[index].name + ' to grocery list?', 'Transfer Food?');
                             setState(() {
                               if (action == ConfirmAction.ACCEPT) {
                                 DatabaseHelper.instance.addGroceryItem(new GroceryItem(name: snapshot.data[index].name));
@@ -131,7 +132,7 @@ class _ExpiredFoodState extends State<ExpiredFood> {
   }
 
   _deleteFood(BuildContext context, int id, String name) async{
-    ConfirmAction action = await Utility.asyncConfirmDialog(context, 'Delete $name from pantry?');
+    ConfirmAction action = await Utility.asyncConfirmDialog(context, 'Delete $name from pantry?', 'Delete food?');
     setState(() {
       if (action == ConfirmAction.ACCEPT) {
         DatabaseHelper.instance.deleteFood(id);

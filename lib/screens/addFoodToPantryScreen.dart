@@ -2,9 +2,11 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 
+import '../SizeConfig.dart';
 import '../database_helper.dart';
 import '../food_item.dart';
 import '../utility.dart';
+import '../local_notification.dart';
 
 class AddFoodToPantryScreen extends StatefulWidget {
   @override
@@ -25,6 +27,8 @@ class AddFoodToPantryScreenState extends State<AddFoodToPantryScreen> {
 
   @override
   Widget build(BuildContext context) {
+    LocalNotification localNotifications = ModalRoute.of(context).settings.arguments;
+    SizeConfig().initiate(context);
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
@@ -38,7 +42,7 @@ class AddFoodToPantryScreenState extends State<AddFoodToPantryScreen> {
               fontWeight: FontWeight.w900,
               //fontStyle: FontStyle.italic,
               fontFamily: 'Times New Roman',
-              fontSize: 30),
+              fontSize: SizeConfig.safeBlockHorizontal * 10),
         ),
       ),
       body: Center(
@@ -64,10 +68,12 @@ class AddFoodToPantryScreenState extends State<AddFoodToPantryScreen> {
                 if(!_validate && _text.text.isNotEmpty){
                   var expirationDate = await Utility.selectDate(context);
                   if(expirationDate != null){
-                    DatabaseHelper.instance.addFood(new FoodItem(name:_text.text,
-                        imageUrl: "BlankImage.png",
+                    FoodItem foodItem = new FoodItem(name:_text.text,
+                        imageUrl: "fork.png",
                         expirationDate: expirationDate.toIso8601String(),
-                        expired: false));
+                        expired: false);
+                    FoodItem result = await DatabaseHelper.instance.addFood(foodItem);
+                    localNotifications.scheduleNotification(foodItem.name, expirationDate, result.id);
                     Navigator.pop(context);
                   }
                 }

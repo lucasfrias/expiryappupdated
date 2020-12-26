@@ -45,12 +45,15 @@ class LocalNotification {
     var scheduledNotificationDateTime;
     var message;
     if(formattedExpiryDate.isBefore(sevenDaysInAdvance)){
-      scheduledNotificationDateTime = expiryDate.subtract(new Duration(days: 3));
-      message = '$foodName will expire in 3 days.';
+      if(formattedExpiryDate != now){
+        //scheduledNotificationDateTime = expiryDate.subtract(new Duration(days: 1));
+        scheduledNotificationDateTime = DateTime.now().add(new Duration(seconds: 30));
+        message = '$foodName will expire in 1 day.';
+      }
     }
     else{
-      scheduledNotificationDateTime = expiryDate.subtract(new Duration(days: 7));
-      //scheduledNotificationDateTime = DateTime.now().add(new Duration(minutes: 1));
+      //scheduledNotificationDateTime = expiryDate.subtract(new Duration(days: 7));
+      scheduledNotificationDateTime = DateTime.now().add(new Duration(seconds: 30));
       message = '$foodName will expire in 7 days.';
     }
     var androidPlatformChannelSpecifics =

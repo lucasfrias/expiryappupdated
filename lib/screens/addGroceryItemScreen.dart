@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
+import '../SizeConfig.dart';
 import '../database_helper.dart';
 import '../grocery_item.dart';
 
@@ -23,6 +24,7 @@ class AddGroceryItemScreenState extends State<AddGroceryItemScreen> {
 
   @override
   Widget build(BuildContext context) {
+    SizeConfig().initiate(context);
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
@@ -36,7 +38,7 @@ class AddGroceryItemScreenState extends State<AddGroceryItemScreen> {
               fontWeight: FontWeight.w900,
               //fontStyle: FontStyle.italic,
               fontFamily: 'Times New Roman',
-              fontSize: 30),
+              fontSize: SizeConfig.safeBlockHorizontal * 9),
         ),
       ),
       body: Center(

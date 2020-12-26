@@ -2,8 +2,8 @@
 import 'package:animated_text_kit/animated_text_kit.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 
+import '../SizeConfig.dart';
 import '../database_helper.dart';
 import '../grocery_item.dart';
 import '../utility.dart';
@@ -23,6 +23,7 @@ class _GroceryList extends State<GroceryList> {
 
   @override
   Widget build(BuildContext context) {
+    SizeConfig().initiate(context);
     return Scaffold(
         appBar: AppBar(
           actions: <Widget>[
@@ -47,7 +48,7 @@ class _GroceryList extends State<GroceryList> {
                 fontWeight: FontWeight.w900,
                 //fontStyle: FontStyle.italic,
                 fontFamily: 'Times New Roman',
-                fontSize: 35),
+                fontSize: SizeConfig.safeBlockHorizontal * 10),
           ),
         ),
         body: FutureBuilder<List<GroceryItem>>(
@@ -90,7 +91,7 @@ class _GroceryList extends State<GroceryList> {
                               icon: Icon(Icons.delete),
                               onPressed: () async {
                                 ConfirmAction action = await Utility.asyncConfirmDialog(context, 'Delete ' + snapshot.data[index].name +
-                                    ' from grocery list?');
+                                    ' from grocery list?', 'Delete food?');
                                 setState(() {
                                   setState(() {
                                     if (action == ConfirmAction.ACCEPT) {

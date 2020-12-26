@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:expiryapp/SizeConfig.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -12,6 +13,7 @@ import '../local_notification.dart';
 import '../product.dart';
 import '../utility.dart';
 import 'addFoodToPantryScreen.dart';
+import 'info_page_swipe.dart';
 
 class Pantry extends StatefulWidget {
   @override
@@ -29,6 +31,7 @@ class _PantryState extends State<Pantry> {
 
   @override
   Widget build(BuildContext context) {
+    SizeConfig().initiate(context);
     return Scaffold(
         appBar: AppBar(
           title: Text(
@@ -41,7 +44,43 @@ class _PantryState extends State<Pantry> {
                 fontWeight: FontWeight.w900,
                 //fontStyle: FontStyle.italic,
                 fontFamily: 'Times New Roman',
-                fontSize: 40),
+                fontSize: SizeConfig.safeBlockHorizontal * 10),
+          ),
+          actions: <Widget>[
+            IconButton(
+              icon: Icon(
+                Icons.photo_camera,
+                color: Colors.white,
+              ),
+              onPressed: () async {
+                ConfirmAction action = await Utility.asyncAddFoodDialog(context);
+                setState(() {
+                  if (action == ConfirmAction.SCANNER) {
+                    //addProduct();
+                    test();
+                  }
+                  else if(action == ConfirmAction.MANUAL){
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => AddFoodToPantryScreen()
+                      ),
+                    );
+                  }
+                });
+              },
+            )
+          ],
+          leading: GestureDetector(
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => InfoPage()),
+              );
+            },
+            child: Icon(
+              Icons.info,
+            ),
           ),
         ),
         body: FutureBuilder<List<FoodItem>>(
@@ -57,8 +96,8 @@ class _PantryState extends State<Pantry> {
                       isRepeatingAnimation: false,
                       text: [
                         "There's no food in your pantry!",
-                        "Add some food by",
-                        "Clicking the plus button in the top right",
+                        "Add some food by,",
+                        "Clicking the camera button in the top right.",
                         "And scanning a barcode!"
                       ],
                       textStyle: TextStyle(
@@ -87,11 +126,11 @@ class _PantryState extends State<Pantry> {
                                 leading: CircleAvatar(
                                   backgroundImage:
                                       snapshot.data[index].imageUrl !=
-                                              "BlankImage.png"
+                                              "fork.png"
                                           ? NetworkImage(
                                               snapshot.data[index].imageUrl)
                                           : AssetImage(
-                                              'assets/images/BlankImage.png'),
+                                              'assets/images/fork.png'),
                                 ),
                                 title: Text(
                                   snapshot.data[index].name,
@@ -128,38 +167,44 @@ class _PantryState extends State<Pantry> {
               }
               return CircularProgressIndicator();
             }),
-        floatingActionButton: FloatingActionButton(
+        /*floatingActionButton: FloatingActionButton(
             foregroundColor: Colors.white,
             backgroundColor: Colors.black38,
             elevation: 10.0,
             child: Icon(Icons.add),
             onPressed: () {
               setState(() {
-                addProduct();
+                test();
+                //addProduct();
               });
             }),
-        floatingActionButtonLocation: FloatingActionButtonLocation.endTop);
+        floatingActionButtonLocation: FloatingActionButtonLocation.endTop*/
+    );
   }
 
-  /*Future<void> test() async{
-   /* Navigator.push(
+  Future<void> test() async{
+    /*Navigator.push(
       context,
       MaterialPageRoute(
         builder: (context) => AddFoodToPantryScreen(),
+        settings: RouteSettings(
+          arguments: localNotifications,
+        )
       ),
     );*/
-    var date = await Utility.selectDate(context);
-    var food = new FoodItem(name: "Eggs",
-        imageUrl: //"https://thestayathomechef.com/wp-content/uploads/2017/08/Most-Amazing-Lasagna-4-e1503516670834.jpg",
-        "BlankImage.png", //"https://static.openfoodfacts.org/images/products/073/762/806/4502/front_en.6.100.jpg",
-        expirationDate: //new DateTime.now().add(new Duration(days: 9)).toIso8601String(),
-        date.toIso8601String(),
+
+
+    //var date = await Utility.selectDate(context);
+    var date = new DateTime.now().add(new Duration(days: 3));
+    var food = new FoodItem(name: "White Bread",
+        imageUrl: "https://www.browneyedbaker.com/wp-content/uploads/2016/05/white-bread-53-600-600x900.jpg",
+        //"BlankImage.png", "https://static.openfoodfacts.org/images/products/073/762/806/4502/front_en.6.100.jpg",
+       expirationDate: date.toIso8601String(),
         expired: false);
     FoodItem result = await DatabaseHelper.instance.addFood(food);
-    //print(result.id.toString());
     setState(()  {});
     localNotifications.scheduleNotification(food.name, date, result.id);
-  }*/
+  }
 
   Future<void> addProduct() async {
     try {
@@ -170,7 +215,7 @@ class _PantryState extends State<Pantry> {
         if (product.statusCode != "0" || product != null) {
           try {
             if (product.imageUrl.isEmpty || product.imageUrl == null) {
-              product.imageUrl = "BlankImage.png";
+              product.imageUrl = "fork.png";
             }
             var expirationDate = await Utility.selectDate(context);
             if (expirationDate != null) {
@@ -204,7 +249,7 @@ class _PantryState extends State<Pantry> {
 
   _deleteFood(FoodItem food) async {
     ConfirmAction action = await Utility.asyncConfirmDialog(
-        context, 'Delete ${food.name} from pantry?');
+        context, 'Delete ${food.name} from pantry?', 'Delete food?');
     setState(() {
       if (action == ConfirmAction.ACCEPT) {
         DatabaseHelper.instance.deleteFood(food.id);
