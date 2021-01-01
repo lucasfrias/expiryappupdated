@@ -13,6 +13,7 @@ import '../local_notification.dart';
 import '../product.dart';
 import '../utility.dart';
 import 'addFoodToPantryScreen.dart';
+import 'expirationDatePickerScreen.dart';
 import 'info_page_swipe.dart';
 
 class Pantry extends StatefulWidget {
@@ -56,8 +57,8 @@ class _PantryState extends State<Pantry> {
                 ConfirmAction action = await Utility.asyncAddFoodDialog(context);
                 setState(() {
                   if (action == ConfirmAction.SCANNER) {
-                    //addProduct();
-                    test();
+                    addProduct();
+                    //test();
                   }
                   else if(action == ConfirmAction.MANUAL){
                     Navigator.push(
@@ -197,6 +198,7 @@ class _PantryState extends State<Pantry> {
     );*/
 
 
+
     //var date = await Utility.selectDate(context);
     var date = new DateTime.now().add(new Duration(days: 3));
     var food = new FoodItem(name: "White Bread",
@@ -204,6 +206,13 @@ class _PantryState extends State<Pantry> {
         //"BlankImage.png", "https://static.openfoodfacts.org/images/products/073/762/806/4502/front_en.6.100.jpg",
        expirationDate: date.toIso8601String(),
         expired: false);
+
+    /*food.imageUrl = null;
+    if(food.imageUrl == null){
+      food.imageUrl = 'fork.png';
+    }
+     */
+
     FoodItem result = await DatabaseHelper.instance.addFood(food);
     setState(()  {});
     localNotifications.scheduleNotification(food.name, date, result.id);
@@ -211,30 +220,49 @@ class _PantryState extends State<Pantry> {
 
   Future<void> addProduct() async {
     try {
+     // var barcode = "123";
       var barcode = await barcodeScanning();
+      print('Barcode read: ' + barcode);
       // ignore: null_aware_in_logical_operator
       if (barcode?.isNotEmpty && barcode != null && barcode != "-1") {
         var product = await fetchProduct(barcode);
+        /*var product = new Product(
+          name: "test",
+          imageUrl: "fork.png",
+          statusCode: "0"
+        );
+         */
+        print('Product Details:'
+            '\nName ' + product.name +
+            '\nImageUrl: ' + product.imageUrl +
+            '\nStatusCode: ' + product.statusCode);
+        product.imageUrl ??= 'fork.png';
         if (product.statusCode != "0" || product != null) {
-          try {
-            if (product.imageUrl.isEmpty || product.imageUrl == null) {
-              product.imageUrl = "fork.png";
-            }
-            var expirationDate = await Utility.selectDate(context);
+            final expirationDate = await Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => ExpirationDateScreen(),
+                )
+            );
             if (expirationDate != null) {
+              //hardcode name sometimes food name comes empty from API
+              if(product.name.isEmpty || product.name == null){
+                product.name = 'Food';
+              }
               FoodItem result = await DatabaseHelper.instance.addFood(
                   new FoodItem(
                       name: product.name,
                       imageUrl: product.imageUrl,
                       expirationDate: expirationDate.toIso8601String(),
                       expired: false));
+
+              print('Result imageurl: ' + result.imageUrl);
+              result.imageUrl ??= 'fork.png';
               setState(() {});
-              print("\nScheduled notification");
               localNotifications.scheduleNotification(
                   product.name, expirationDate, result.id);
               print("\nSuccessfully added item!");
             }
-          } catch (e) {}
         }
       }
     } catch (e) {
@@ -243,10 +271,14 @@ class _PantryState extends State<Pantry> {
         Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (context) => AddFoodToPantryScreen(),
+              builder: (context) => AddFoodToPantryScreen(),
+              settings: RouteSettings(
+                arguments: localNotifications,
+              )
           ),
         );
       }
+
     }
   }
 

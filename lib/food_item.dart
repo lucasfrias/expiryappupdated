@@ -1,7 +1,7 @@
 class FoodItem {
   int id;
   final String name;
-  final String imageUrl;
+  String imageUrl;
   final String expirationDate;
   bool expired;
   static const String TABLENAME = "foods";

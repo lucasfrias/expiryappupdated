@@ -206,4 +206,14 @@ class Utility {
       },
     );
   }
+
+  static showSnackBar(BuildContext context, String text)
+  {
+    final snackBar = SnackBar(
+      content: Text(text),
+      duration: Duration(seconds: 1),//default is 4s
+    );
+    // Find the Scaffold in the widget tree and use it to show a SnackBar.
+    Scaffold.of(context).showSnackBar(snackBar);
+  }
 }

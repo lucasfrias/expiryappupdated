@@ -20,7 +20,8 @@ class AddFoodToPantryScreen extends StatefulWidget {
 
 class AddFoodToPantryScreenState extends State<AddFoodToPantryScreen> {
   final _text = TextEditingController();
-  bool _validate = false;
+  bool _validateText = false;
+  bool _validateDate = false;
   DateTime expirationDate;
 
   @override
@@ -49,7 +50,9 @@ class AddFoodToPantryScreenState extends State<AddFoodToPantryScreen> {
               fontSize: SizeConfig.safeBlockHorizontal * 10),
         ),
       ),
-      body: Column(
+      body: Builder(
+        builder: (context) =>
+            Column(
         mainAxisAlignment: MainAxisAlignment.center,
         crossAxisAlignment: CrossAxisAlignment.center,
         children: <Widget>[
@@ -64,7 +67,7 @@ class AddFoodToPantryScreenState extends State<AddFoodToPantryScreen> {
                 decoration: InputDecoration(
                   border: OutlineInputBorder(),
                   labelText: 'Enter the name of your food.',
-                  errorText: _validate ? 'Value Can\'t Be Empty' : null,
+                  errorText: _validateText ? 'Name Can\'t Be Empty' : null,
                 ),
               ),
           ),
@@ -96,10 +99,23 @@ class AddFoodToPantryScreenState extends State<AddFoodToPantryScreen> {
               RaisedButton(
                 onPressed: () async {
                   setState(() {
-                    _text.text.isEmpty ? _validate = true : _validate = false;
+                    _text.text.isEmpty
+                        ? _validateText = true
+                        : _validateText = false;
                   });
 
-                  if(!_validate && _text.text.isNotEmpty){
+                  if(expirationDate.isBefore(DateTime.now()) && expirationDate != (DateTime.now())){
+                    Scaffold.of(context).showSnackBar(
+                        SnackBar(
+                          content: Text('Date must be after today!',textAlign: TextAlign.center,
+                              style: TextStyle(
+                                fontSize: 18,
+                                fontFamily: 'Times New Roman',)),
+                          backgroundColor: Colors.red,
+                        )
+                    );
+                  }
+                  else if(!_validateText && _text.text.isNotEmpty){
 
                     // var expirationDate = await Utility.selectDate(context);
                    /* final expirationDate = await Navigator.push(
@@ -134,6 +150,7 @@ class AddFoodToPantryScreenState extends State<AddFoodToPantryScreen> {
         ],
 
       ),
+      )
     );
   }
 }

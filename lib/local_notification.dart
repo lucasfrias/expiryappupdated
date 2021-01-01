@@ -39,6 +39,7 @@ class LocalNotification {
 
   scheduleNotification(String foodName, DateTime expiryDate, int id) async {
     print("Scheduling notifications.");
+    expiryDate.add(new Duration(hours: 10)); //user will be notified at 10am
     DateTime formattedExpiryDate = new DateTime(expiryDate.year, expiryDate.month, expiryDate.day);
     DateTime now = new DateTime(DateTime.now().year, DateTime.now().month, DateTime.now().day);
     DateTime sevenDaysInAdvance = new DateTime(now.year, now.month, now.day).add(new Duration(days: 7));

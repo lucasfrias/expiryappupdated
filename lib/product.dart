@@ -1,5 +1,5 @@
 class Product {
-  final String name;
+  String name;
   String imageUrl;
   final String statusCode;
 
@@ -10,8 +10,12 @@ class Product {
         name: json['product']['product_name'].toString(),
         imageUrl: json['product']['image_url'].toString() != null
             ? json['product']['image_thumb_url'].toString()
-            : "BlankImage.png",
+            : "fork.png",
         statusCode: json['status'].toString()
     );
+  }
+
+  setName(String name){
+    this.name = name;
   }
 }
