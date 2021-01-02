@@ -104,7 +104,7 @@ class AddFoodToPantryScreenState extends State<AddFoodToPantryScreen> {
                         : _validateText = false;
                   });
 
-                  if(expirationDate.isBefore(DateTime.now()) && expirationDate != (DateTime.now())){
+                  if(expirationDate == null || expirationDate.isBefore(DateTime.now())){
                     Scaffold.of(context).showSnackBar(
                         SnackBar(
                           content: Text('Date must be after today!',textAlign: TextAlign.center,
@@ -136,7 +136,7 @@ class AddFoodToPantryScreenState extends State<AddFoodToPantryScreen> {
                       setState(() {});
                       localNotifications.scheduleNotification(
                           _text.text, expirationDate, result.id);
-                      print("\nSuccessfully added item!");
+                      print("Successfully added item!");
                       Navigator.pop(context);
                     }
                   }

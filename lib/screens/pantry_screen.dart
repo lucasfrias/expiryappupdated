@@ -220,8 +220,9 @@ class _PantryState extends State<Pantry> {
 
   Future<void> addProduct() async {
     try {
-     // var barcode = "123";
-      var barcode = await barcodeScanning();
+      var barcode = "0787359100215"; //food with no image
+     // var barcode = "737628064502"; //food with image
+     // var barcode = await barcodeScanning();
       print('Barcode read: ' + barcode);
       // ignore: null_aware_in_logical_operator
       if (barcode?.isNotEmpty && barcode != null && barcode != "-1") {
