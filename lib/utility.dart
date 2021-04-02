@@ -5,8 +5,9 @@ import 'package:intl/intl.dart';
 enum ConfirmAction { CANCEL, ACCEPT, SCANNER, MANUAL }
 
 class Utility {
-
-  static Future<ConfirmAction> asyncConfirmDialog(BuildContext context, String content, String title) async {
+  static Future<ConfirmAction> asyncConfirmDialog(
+      BuildContext context, String content, String title,
+      {switchColor = false}) async {
     return showDialog<ConfirmAction>(
       context: context,
       barrierDismissible: false, // user must tap button for close dialog!
@@ -16,32 +17,19 @@ class Utility {
           content: Text(content),
           actions: <Widget>[
             CupertinoDialogAction(
+                textStyle: switchColor ? TextStyle(color: Colors.red) : null,
                 isDefaultAction: true,
-                onPressed: (){
+                onPressed: () {
                   Navigator.of(context).pop(ConfirmAction.CANCEL);
                 },
-                child: Text("Cancel")
-            ),
+                child: Text("Cancel")),
             CupertinoDialogAction(
-                textStyle: TextStyle(color: Colors.red),
+                textStyle: switchColor ? null : TextStyle(color: Colors.red),
                 isDefaultAction: true,
                 onPressed: () async {
                   Navigator.of(context).pop(ConfirmAction.ACCEPT);
                 },
-                child: Text("Accept")
-            ),
-            /**FlatButton(
-              child: const Text('CANCEL'),
-              onPressed: () {
-                Navigator.of(context).pop(ConfirmAction.CANCEL);
-              },
-            ),
-            FlatButton(
-              child: const Text('ACCEPT'),
-              onPressed: () {
-                Navigator.of(context).pop(ConfirmAction.ACCEPT);
-              },
-            )**/
+                child: Text("Accept")),
           ],
         );
       },
@@ -59,37 +47,57 @@ class Utility {
           actions: <Widget>[
             CupertinoDialogAction(
                 isDefaultAction: true,
-                onPressed: (){
+                onPressed: () {
                   Navigator.of(context).pop(ConfirmAction.MANUAL);
                 },
-                child: Text("Manually")
-            ),
+                child: Text("Manually")),
             CupertinoDialogAction(
                 isDefaultAction: true,
                 onPressed: () async {
                   Navigator.of(context).pop(ConfirmAction.SCANNER);
                 },
-                child: Text("Scanner")
-            ),
+                child: Text("Scanner")),
           ],
         );
       },
     );
   }
 
-  static String formatISO(String date){
-    var datetime = DateTime.parse(date.replaceFirstMapped(RegExp("(\\.\\d{6})\\d+"), (m) => m[1]));
+  static Future<ConfirmAction> asyncErrorDialog(
+      BuildContext context, String content, String title) async {
+    return showDialog<ConfirmAction>(
+      context: context,
+      barrierDismissible: false, // user must tap button for close dialog!
+      builder: (BuildContext context) {
+        return CupertinoAlertDialog(
+          title: Text(title),
+          content: Text(content),
+          actions: <Widget>[
+            CupertinoDialogAction(
+                isDefaultAction: true,
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+                child: Text("Ok"))
+          ],
+        );
+      },
+    );
+  }
+
+  static String formatISO(String date) {
+    var datetime = DateTime.parse(
+        date.replaceFirstMapped(RegExp("(\\.\\d{6})\\d+"), (m) => m[1]));
     return DateFormat.yMMMMd("en_US").format(datetime).toString();
   }
 
   static Future<DateTime> selectDate(BuildContext context) async {
     final DateTime today = DateTime.now();
-    final DateTime expirationDate =  await showDatePicker(
+    final DateTime expirationDate = await showDatePicker(
         context: context,
         initialDate: today,
         firstDate: today,
-        lastDate: DateTime.now().add(Duration(days: 356))
-    );
+        lastDate: DateTime.now().add(Duration(days: 356)));
     print(expirationDate);
     //asyncTest(context, expirationDate.toString());
     return expirationDate;
@@ -126,10 +134,10 @@ class Utility {
         ));
 
     return expirationDate;
-
   }
 
-  static Future<ConfirmAction> asyncManualBarcodeDialog(BuildContext context) async {
+  static Future<ConfirmAction> asyncManualBarcodeDialog(
+      BuildContext context) async {
     return showDialog<ConfirmAction>(
       context: context,
       barrierDismissible: false, // user must tap button for close dialog!
@@ -140,34 +148,32 @@ class Utility {
           actions: <Widget>[
             CupertinoDialogAction(
                 isDefaultAction: true,
-                onPressed: (){
+                onPressed: () {
                   Navigator.of(context).pop(ConfirmAction.CANCEL);
                 },
-              child: const Text('No')
-            ),
+                child: const Text('No')),
             CupertinoDialogAction(
                 isDefaultAction: true,
                 onPressed: () async {
                   Navigator.of(context).pop(ConfirmAction.ACCEPT);
                 },
-               child: const Text('Yes')
-            ),
-       /** return AlertDialog(
-          title: Text("Sorry! There was an error."),
-          content: Text("Would you like to add it manually?"),
-          actions: <Widget>[
-            FlatButton(
-              child: const Text('No'),
-              onPressed: () {
+                child: const Text('Yes')),
+            /** return AlertDialog(
+                title: Text("Sorry! There was an error."),
+                content: Text("Would you like to add it manually?"),
+                actions: <Widget>[
+                FlatButton(
+                child: const Text('No'),
+                onPressed: () {
                 Navigator.of(context).pop(ConfirmAction.CANCEL);
-              },
-            ),
-            FlatButton(
-              child: const Text('Yes'),
-              onPressed: () {
+                },
+                ),
+                FlatButton(
+                child: const Text('Yes'),
+                onPressed: () {
                 Navigator.of(context).pop(ConfirmAction.ACCEPT);
-              },
-            )**/
+                },
+                )**/
           ],
         );
       },
@@ -185,33 +191,31 @@ class Utility {
           actions: <Widget>[
             CupertinoDialogAction(
                 isDefaultAction: true,
-                onPressed: (){
+                onPressed: () {
                   Navigator.of(context).pop();
                 },
-                child: const Text('Ok')
-            ),
+                child: const Text('Ok')),
           ],
-        /**return AlertDialog(
-          title: Text("Sorry! There was an error."),
-          content: Text("Please try again."),
-          actions: [
-            FlatButton(
+          /**return AlertDialog(
+              title: Text("Sorry! There was an error."),
+              content: Text("Please try again."),
+              actions: [
+              FlatButton(
               child: Text('Ok'),
               onPressed: (){
-                Navigator.of(context).pop();
+              Navigator.of(context).pop();
               },
-            ),
-          ],**/
+              ),
+              ],**/
         );
       },
     );
   }
 
-  static showSnackBar(BuildContext context, String text)
-  {
+  static showSnackBar(BuildContext context, String text) {
     final snackBar = SnackBar(
       content: Text(text),
-      duration: Duration(seconds: 1),//default is 4s
+      duration: Duration(seconds: 1), //default is 4s
     );
     // Find the Scaffold in the widget tree and use it to show a SnackBar.
     Scaffold.of(context).showSnackBar(snackBar);

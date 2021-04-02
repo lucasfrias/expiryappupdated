@@ -15,6 +15,7 @@ class ScreenNavigation extends StatefulWidget {
 
 class _ScreenNavigationState extends State {
   Widget _child;
+
   //final  Color mainBlack = Color(0xFF383838);
 
   @override
@@ -27,17 +28,17 @@ class _ScreenNavigationState extends State {
   Widget build(context) {
     // Build a simple container that switches content based of off the selected navigation item
     return MaterialApp(
-      theme: ThemeData(
+        theme: ThemeData(
           brightness: Brightness.light,
           appBarTheme: new AppBarTheme(color: Color(0xFF2E8B57)),
-          scaffoldBackgroundColor: Colors.white70
-      ),
-      home: Scaffold(
-        extendBody: true,
-        body: _child,
-        bottomNavigationBar: FluidNavBar(onChange: _handleNavigationChange),
-      ),
-    );
+          scaffoldBackgroundColor: Colors.white70,
+        ),
+        home: Scaffold(
+          extendBody: true,
+          body: _child,
+          bottomNavigationBar: FluidNavBar(onChange: _handleNavigationChange),
+        ),
+        debugShowCheckedModeBanner: false);
   }
 
   void _handleNavigationChange(int index) {
@@ -48,7 +49,7 @@ class _ScreenNavigationState extends State {
           break;
         case 1:
           _child = ExpiredFood();
-        //_child = LocalNotificationWidget();
+          //_child = LocalNotificationWidget();
           break;
         case 2:
           _child = GroceryList();
@@ -58,7 +59,8 @@ class _ScreenNavigationState extends State {
         switchInCurve: Curves.easeOut,
         switchOutCurve: Curves.easeIn,
         duration: Duration(milliseconds: 500),
-        child: _child,);
+        child: _child,
+      );
     });
   }
 }

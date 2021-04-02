@@ -5,13 +5,10 @@ import 'package:flutter/material.dart';
 import 'date_explanation_screen.dart';
 
 class InfoPage extends StatefulWidget {
-
   InfoPageState createState() => InfoPageState();
-
 }
 
-class InfoPageState extends State<InfoPage>{
-
+class InfoPageState extends State<InfoPage> {
   final controller = PageController(
     initialPage: 0,
   );
@@ -19,18 +16,13 @@ class InfoPageState extends State<InfoPage>{
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        body: Center(child:
-        PageView(
-          controller: controller,
-          pageSnapping: true,
-          scrollDirection: Axis.horizontal,
-          children: <Widget>[
-            ShelfLifeScreen(),
-            DateExpirationScreen()
-          ],
-        ),
-
-        )
-    );
+        body: Center(
+      child: PageView(
+        controller: controller,
+        pageSnapping: true,
+        scrollDirection: Axis.horizontal,
+        children: <Widget>[ShelfLifeScreen(), DateExpirationScreen()],
+      ),
+    ));
   }
 }

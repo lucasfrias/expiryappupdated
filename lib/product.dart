@@ -8,17 +8,14 @@ class Product {
   factory Product.fromJson(Map<String, dynamic> json) {
     Product product = new Product(
         name: json['product']['product_name'].toString(),
-        statusCode: json['status'].toString()
-    );
+        statusCode: json['status'].toString());
 
-    if(json['product']['image_thumb_url'] != null){
+    if (json['product']['image_thumb_url'] != null) {
       product.imageUrl = json['product']['image_thumb_url'].toString();
-    }
-    else{
+    } else {
       product.imageUrl = "fork.png";
     }
     return product;
-
   }
 
   /*factory Product.fromJsonWithoutImage(Map<String, dynamic> json) {
@@ -30,7 +27,7 @@ class Product {
   }
    */
 
-  setName(String name){
+  setName(String name) {
     this.name = name;
   }
 }

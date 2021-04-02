@@ -4,12 +4,10 @@ import 'package:flutter/material.dart';
 
 import 'SizeConfig.dart';
 
-
 void main() => runApp(MyApp());
 
 class MyApp extends StatelessWidget {
   //final  Color mainBlack = Color(0xFF383838);
-
 
   @override
   Widget build(BuildContext context) {
@@ -21,8 +19,7 @@ class MyApp extends StatelessWidget {
             return MaterialApp(
               theme: ThemeData(
                   brightness: Brightness.dark,
-                  scaffoldBackgroundColor: Colors.lightGreen
-              ),
+                  scaffoldBackgroundColor: Colors.lightGreen),
               debugShowCheckedModeBanner: false,
               title: 'HomeScreen App',
               home: ScreenNavigation(),
@@ -32,7 +29,7 @@ class MyApp extends StatelessWidget {
       },
     );
   }
- /* @override
+/* @override
   Widget build(BuildContext context) {
     return MaterialApp(
         theme: ThemeData(
